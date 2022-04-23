@@ -10,7 +10,7 @@ import ru.koda.gigachat.entity.Channel;
  */
 public interface ChannelService {
 
-    Boolean isAccessibleByUser(final String channelId, final String userLogin);
+    Boolean isAccessibleByUser(final Channel channel, final String userLogin);
 
     Channel getById(final String id);
 

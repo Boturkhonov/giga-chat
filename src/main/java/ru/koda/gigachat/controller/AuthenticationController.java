@@ -45,17 +45,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody final User user) {
         final Optional<User> optional = userRepository.findByLogin(user.getLogin().toLowerCase());
         if (optional.isPresent()) {
             return ResponseEntity.badRequest().build();
         }
-        userService.saveUser(user, passwordEncoder);
-        return login(user);
+        final User savedUser = userService.saveUser(user, passwordEncoder);
+        return ResponseEntity.ok(savedUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody final User user) {
         try {
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));

@@ -78,6 +78,8 @@ create table avatar
 
 alter table only app_user
     add constraint app_user_pkey primary key (id);
+alter table only app_user
+    add constraint app_user_login_ukey unique (login);
 alter table only channel
     add constraint channel_pkey primary key (id);
 alter table only user_to_channel

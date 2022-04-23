@@ -12,12 +12,6 @@ import ru.koda.gigachat.service.UserService;
 
 import java.util.UUID;
 
-/**
- * todo kboturkhonov
- *
- * @author Kamron Boturkhonov
- * @since 2022.04.23
- */
 @Service
 public class ChannelServiceImpl implements ChannelService {
 
@@ -31,9 +25,9 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Boolean isAccessibleByUser(final String channelId, final String userLogin) {
+    public Boolean isAccessibleByUser(final Channel channel, final String userLogin) {
         final User user = userService.getByLogin(userLogin);
-        return getById(channelId).getUsers().contains(user);
+        return channel.getUsers().contains(user);
     }
 
     @Override
@@ -44,15 +38,10 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Channel saveChannel(final Channel channel, final String userLogin) {
-        final Channel newChannel = new Channel();
         final User user = userService.getByLogin(userLogin);
-        newChannel.setId(UUID.randomUUID().toString());
-        newChannel.setName(channel.getName());
-        newChannel.setAvatar(channel.getAvatar());
-        newChannel.setOwner(user);
-        newChannel.setAbout(channel.getAbout());
-        newChannel.setLink(getHash(channel.getId()));
-
+        channel.setId(UUID.randomUUID().toString());
+        channel.setOwner(user);
+        channel.setLink(getHash(channel.getId()));
         return channelRepository.save(channel);
     }
 

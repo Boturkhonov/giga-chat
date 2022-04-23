@@ -1,5 +1,7 @@
 package ru.koda.gigachat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +33,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Channel extends AbstractEntity {
 
     @Column(name = "name", nullable = false)
@@ -51,8 +54,8 @@ public class Channel extends AbstractEntity {
     private String link;
 
     @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(name = "user_to_channel", joinColumns = { @JoinColumn(name = "channel_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") })
+    @JoinTable(name = "user_to_channel", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "channel_id"))
     private Set<User> users;
 
     @OneToMany(mappedBy = "channel", fetch = FetchType.EAGER)
