@@ -7,5 +7,5 @@ package ru.koda.gigachat.entity;
  * @since 2022.04.23
  */
 public enum ChatType {
-    PRIVATE, PUBLIC, CHANEL
+    PRIVATE, PUBLIC, CHANNEL
 }

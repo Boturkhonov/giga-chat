@@ -17,16 +17,16 @@ import javax.persistence.Table;
  * @since 2022.04.23
  */
 @Entity
-@Table(name = "user_to_chanel")
+@Table(name = "user_to_channel")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChanelUser extends AbstractEntity {
+public class ChannelUser extends AbstractEntity {
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "chanel_id", nullable = false)
-    private Chanel chanel;
+    @JoinColumn(name = "channel_id", nullable = false)
+    private Channel channel;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)

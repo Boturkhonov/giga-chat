@@ -9,6 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -32,9 +35,11 @@ public class Chat extends AbstractEntity {
     @Enumerated(EnumType.ORDINAL)
     private ChatType chatType;
 
-    @Column(name = "avatar_path")
-    private String avatarPath;
+    @OneToOne
+    @JoinColumn(name = "avatar_id")
+    private Avatar avatar;
 
-    @Column(name = "chanel_id", nullable = false)
-    private String chanelId;
+    @ManyToOne
+    @JoinColumn(name = "channel_id")
+    private Channel channel;
 }

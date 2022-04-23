@@ -1,9 +1,11 @@
 package ru.koda.gigachat.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import ru.koda.gigachat.entity.User;
 
-@Repository
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<User, String> {
+
+    Optional<User> findByLogin(final String login);
 }
