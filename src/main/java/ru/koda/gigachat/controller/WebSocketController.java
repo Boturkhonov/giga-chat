@@ -1,10 +1,8 @@
 package ru.koda.gigachat.controller;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.RestController;
 import ru.koda.gigachat.entity.Chat;
 import ru.koda.gigachat.entity.Message;

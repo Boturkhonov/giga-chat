@@ -29,7 +29,7 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    public ChatController(UserService userService, ChatService chatService) {
+    public ChatController(final UserService userService, final ChatService chatService) {
         this.userService = userService;
         this.chatService = chatService;
     }
@@ -45,7 +45,7 @@ public class ChatController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Chat> getChat(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Chat> getChat(final Principal principal, @PathVariable final String id) {
         final Chat chat = chatService.getById(id);
         return chatService.isAccessibleByUser(chat, principal.getName())
                 ? ResponseEntity.ok(chat)
@@ -53,7 +53,7 @@ public class ChatController {
     }
 
     @GetMapping("{id}/messages")
-    public ResponseEntity<List<Message>> getChatMessages(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<List<Message>> getChatMessages(final Principal principal, @PathVariable final String id) {
         final Chat chat = chatService.getById(id);
         if (chatService.isAccessibleByUser(chat, principal.getName())) {
             chat.getMessages().sort(Comparator.comparing(AbstractEntity::getCreationTime));
@@ -63,7 +63,7 @@ public class ChatController {
     }
 
     @GetMapping("{id}/users")
-    public ResponseEntity<Set<User>> getChatUsers(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Set<User>> getChatUsers(final Principal principal, @PathVariable final String id) {
         final Chat chat = chatService.getById(id);
         return chatService.isAccessibleByUser(chat, principal.getName())
                 ? ResponseEntity.ok(chatService.getUsers(chat))
@@ -76,7 +76,7 @@ public class ChatController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<?> updateChat(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<?> updateChat(final Principal principal, @PathVariable final String id) {
         final User user = userService.getByLogin(principal.getName());
         final Chat chat = chatService.getById(id);
         final Boolean updated = chatService.updateChat(chat, user);

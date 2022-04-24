@@ -36,7 +36,7 @@ public class AuthenticationController {
             final UserDetailsServiceImpl userDetailsService,
             final UserRepository userRepository,
             final UserService userService,
-            PasswordEncoder passwordEncoder) {
+            final PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userService = userService;

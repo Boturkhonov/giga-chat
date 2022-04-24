@@ -34,8 +34,8 @@ public class ChannelController {
 
     public ChannelController(final UserService userService,
             final ChannelService channelService,
-            ChannelUserRepository channelUserRepository,
-            ChannelRepository channelRepository) {
+            final ChannelUserRepository channelUserRepository,
+            final ChannelRepository channelRepository) {
         this.userService = userService;
         this.channelService = channelService;
         this.channelUserRepository = channelUserRepository;
@@ -48,7 +48,7 @@ public class ChannelController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Channel> getChannel(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Channel> getChannel(final Principal principal, @PathVariable final String id) {
         final Channel channel = channelService.getById(id);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(channel)
@@ -56,7 +56,7 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/users")
-    public ResponseEntity<Set<User>> getChannelUsers(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Set<User>> getChannelUsers(final Principal principal, @PathVariable final String id) {
         final Channel channel = channelService.getById(id);
         final Set<User> subscribers = channelService.getSubscribers(channel);
         return channelService.isAccessibleByUser(channel, principal.getName())
@@ -65,7 +65,7 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/chats")
-    public ResponseEntity<Set<Chat>> getChannelChats(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Set<Chat>> getChannelChats(final Principal principal, @PathVariable final String id) {
         final Channel channel = channelService.getById(id);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(channel.getChats())
@@ -78,7 +78,7 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/leave")
-    public void leaveChannel(final Principal principal, @PathVariable String id) {
+    public void leaveChannel(final Principal principal, @PathVariable final String id) {
         final Channel channel = channelService.getById(id);
         final User user = userService.getByLogin(principal.getName());
 
@@ -97,7 +97,7 @@ public class ChannelController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteChannel(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<?> deleteChannel(final Principal principal, @PathVariable final String id) {
         final User user = userService.getByLogin(principal.getName());
         final Channel channel = channelService.getById(id);
 

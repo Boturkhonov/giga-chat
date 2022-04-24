@@ -7,6 +7,8 @@ import ru.koda.gigachat.service.ChatService;
 import ru.koda.gigachat.service.MessageService;
 import ru.koda.gigachat.service.UserService;
 
+import java.util.UUID;
+
 @Service
 public class MessageServiceImpl implements MessageService {
 
@@ -26,6 +28,8 @@ public class MessageServiceImpl implements MessageService {
     public Message saveMessage(final Message message) {
 
         if (chatService.canSendMessage(message.getChat(), message.getSender())) {
+            message.setId(UUID.randomUUID().toString());
+            message.setIsRead(Boolean.FALSE);
             return messageRepository.save(message);
         }
         return null;

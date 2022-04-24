@@ -10,6 +10,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Вспомогательный класс для работы с файлами.
+ */
 public class FileIOHelper {
 
     public static String saveUploadedFile(final MultipartFile file, final String uploadFolder) throws IOException {
