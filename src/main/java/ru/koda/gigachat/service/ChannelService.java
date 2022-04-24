@@ -1,6 +1,9 @@
 package ru.koda.gigachat.service;
 
 import ru.koda.gigachat.entity.Channel;
+import ru.koda.gigachat.entity.User;
+
+import java.util.Set;
 
 /**
  * Сервис для работы с Каналами.
@@ -15,4 +18,6 @@ public interface ChannelService {
     Channel getById(final String id);
 
     Channel saveChannel(final Channel channel, final String userLogin);
+
+    Set<User> getSubscribers(final Channel channel);
 }

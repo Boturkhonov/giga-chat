@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.koda.gigachat.entity.AbstractEntity;
 import ru.koda.gigachat.entity.Chat;
+import ru.koda.gigachat.entity.Message;
 import ru.koda.gigachat.entity.User;
 import ru.koda.gigachat.service.ChatService;
 import ru.koda.gigachat.service.UserService;
 
 import java.security.Principal;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -33,18 +35,39 @@ public class ChatController {
     }
 
     @GetMapping
-    public Set<Chat> getChats(final Principal principal) {
-        return userService.getByLogin(principal.getName()).getChats();
+    public Set<Chat> getUserChats(final Principal principal) {
+        return userService.getChats(userService.getByLogin(principal.getName()));
+    }
+
+    @GetMapping("/private")
+    public Set<Chat> getUserPrivateChats(final Principal principal) {
+        return chatService.getPrivateChats(userService.getByLogin(principal.getName()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Chat> getChatMessages(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Chat> getChat(final Principal principal, @PathVariable String id) {
+        final Chat chat = chatService.getById(id);
+        return chatService.isAccessibleByUser(chat, principal.getName())
+                ? ResponseEntity.ok(chat)
+                : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("{id}/messages")
+    public ResponseEntity<List<Message>> getChatMessages(final Principal principal, @PathVariable String id) {
         final Chat chat = chatService.getById(id);
         if (chatService.isAccessibleByUser(chat, principal.getName())) {
             chat.getMessages().sort(Comparator.comparing(AbstractEntity::getCreationTime));
-            return ResponseEntity.ok(chat);
+            return ResponseEntity.ok(chat.getMessages());
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("{id}/users")
+    public ResponseEntity<Set<User>> getChatUsers(final Principal principal, @PathVariable String id) {
+        final Chat chat = chatService.getById(id);
+        return chatService.isAccessibleByUser(chat, principal.getName())
+                ? ResponseEntity.ok(chatService.getUsers(chat))
+                : ResponseEntity.badRequest().build();
     }
 
     @PostMapping

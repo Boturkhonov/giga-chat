@@ -36,10 +36,10 @@ create table chat
 (
     id            varchar(255) not null,
     creation_time timestamp    not null,
-    name          varchar(255) not null,
+    name          varchar(255),
     chat_type     integer      not null,
     avatar_id     varchar(255),
-    channel_id    varchar(255) not null
+    channel_id    varchar(255)
 );
 
 create table user_to_chat

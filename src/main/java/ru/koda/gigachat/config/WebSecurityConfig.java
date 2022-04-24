@@ -16,12 +16,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import ru.koda.gigachat.security.JwtRequestFilter;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String[] ALLOWED_GUEST_GET = new String[] { "/api/login", "/api/register" };
+    private final String[] ALLOWED_GUEST_GET = new String[] { "/api/login", "/api/register", "/chat" };
 
     private final UserDetailsService userDetailsService;
 
@@ -38,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         final CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedMethods(Collections.singletonList(CorsConfiguration.ALL));
+        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("http://localhost:*"));
+        corsConfiguration.setAllowCredentials(true);
 
         httpSecurity.cors().configurationSource(request -> corsConfiguration.applyPermitDefaultValues());
 
@@ -49,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, ALLOWED_GUEST_GET)
                 .permitAll()
                 .anyRequest()
-                .authenticated()
+                .permitAll()
                 .and()
                 .exceptionHandling()
                 .and()

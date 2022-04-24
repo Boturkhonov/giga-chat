@@ -23,9 +23,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message saveMessage(final Message message, final String senderLogin) {
+    public Message saveMessage(final Message message) {
 
-        if (chatService.canSendMessage(message.getChat(), userService.getByLogin(senderLogin))) {
+        if (chatService.canSendMessage(message.getChat(), message.getSender())) {
             return messageRepository.save(message);
         }
         return null;

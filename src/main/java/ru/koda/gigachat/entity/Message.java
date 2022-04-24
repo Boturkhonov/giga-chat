@@ -1,9 +1,11 @@
 package ru.koda.gigachat.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,16 +23,22 @@ import javax.persistence.Table;
 @Table(name = "message")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 public class Message extends AbstractEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "sender_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User sender;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "chat_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Chat chat;
 
     @Column(name = "is_read", nullable = false)

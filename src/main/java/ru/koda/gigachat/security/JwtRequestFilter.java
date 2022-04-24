@@ -1,5 +1,6 @@
 package ru.koda.gigachat.security;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
-    public JwtRequestFilter(final UserDetailsService userDetailsService) {
+    public JwtRequestFilter(@Qualifier("userDetailsServiceImpl") final UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

@@ -1,10 +1,12 @@
 package ru.koda.gigachat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.HashSet;
@@ -16,8 +18,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -31,6 +32,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "app_user")
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
@@ -49,6 +51,8 @@ public class User extends AbstractEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "avatar_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Avatar avatar;
 
     @Column(name = "about")
@@ -57,14 +61,20 @@ public class User extends AbstractEntity {
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic = Boolean.TRUE;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-    private Set<Channel> channels = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ChannelUser> channelUsers = new HashSet<>();
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-    @JoinTable(name = "user_to_chat", joinColumns = { @JoinColumn(name = "chat_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") })
-    private Set<Chat> chats = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ChatUser> chatUsers = new HashSet<>();
 
     @Transient
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String token;
 }

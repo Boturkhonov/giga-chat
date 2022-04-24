@@ -3,6 +3,8 @@ package ru.koda.gigachat.service;
 import ru.koda.gigachat.entity.Chat;
 import ru.koda.gigachat.entity.User;
 
+import java.util.Set;
+
 /**
  * Сервис для работы с Чатами.
  *
@@ -26,4 +28,8 @@ public interface ChatService {
     Boolean canUpdate(final Chat chat, final User user);
 
     Boolean updateChat(final Chat chat, final User user);
+
+    Set<User> getUsers(final Chat chat);
+
+    Set<Chat> getPrivateChats(final User user);
 }

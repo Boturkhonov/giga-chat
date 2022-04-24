@@ -10,6 +10,6 @@ import ru.koda.gigachat.entity.Message;
  */
 public interface MessageService {
 
-    Message saveMessage(final Message message, final String senderLogin);
+    Message saveMessage(final Message message);
 
 }

@@ -4,12 +4,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.koda.gigachat.entity.Channel;
+import ru.koda.gigachat.entity.ChannelUser;
+import ru.koda.gigachat.entity.Chat;
+import ru.koda.gigachat.entity.ChatUser;
 import ru.koda.gigachat.entity.User;
 import ru.koda.gigachat.repo.UserRepository;
-import ru.koda.gigachat.service.AvatarService;
 import ru.koda.gigachat.service.UserService;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,11 +24,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final AvatarService avatarService;
-
-    public UserServiceImpl(UserRepository userRepository, AvatarService avatarService) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.avatarService = avatarService;
+    }
+
+    @Override
+    public User getById(final String id) {
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(id));
     }
 
     @Override
@@ -36,9 +43,18 @@ public class UserServiceImpl implements UserService {
         user.setId(UUID.randomUUID().toString());
         user.setLogin(user.getLogin().toLowerCase());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getAvatar() == null) {
-            user.setAvatar(avatarService.getById(defaultAvatarId));
-        }
+
         return userRepository.save(user);
     }
+
+    @Override
+    public Set<Channel> getChannels(final User user) {
+        return user.getChannelUsers().stream().map(ChannelUser::getChannel).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Chat> getChats(final User user) {
+        return user.getChatUsers().stream().map(ChatUser::getChat).collect(Collectors.toSet());
+    }
+
 }
