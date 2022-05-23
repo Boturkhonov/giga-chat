@@ -45,7 +45,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody final User user) {
+    public ResponseEntity<User> register(@RequestBody final User user) {
         final Optional<User> optional = userRepository.findByLogin(user.getLogin().toLowerCase());
         if (optional.isPresent()) {
             return ResponseEntity.badRequest().build();
@@ -55,7 +55,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody final User user) {
+    public ResponseEntity<User> login(@RequestBody final User user) {
         try {
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));

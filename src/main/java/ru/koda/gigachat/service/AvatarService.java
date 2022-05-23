@@ -12,4 +12,6 @@ public interface AvatarService {
 
     Avatar getById(final String id);
 
+    Avatar saveAvatar(final Avatar avatar);
+
 }

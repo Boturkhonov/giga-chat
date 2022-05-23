@@ -19,6 +19,6 @@ public class CustomProperties {
 
     private String attachmentFolder;
 
-    private String defaultAvatarId;
+    private String defaultUserAvatarId;
 
 }

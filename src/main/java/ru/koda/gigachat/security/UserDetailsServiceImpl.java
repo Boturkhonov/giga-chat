@@ -14,12 +14,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserService userService;
 
-    public UserDetailsServiceImpl(UserService userService) {
+    public UserDetailsServiceImpl(final UserService userService) {
         this.userService = userService;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         final User user = userService.getByLogin(username);
         return new org.springframework.security.core.userdetails.User(user.getLogin(),
                 user.getPassword(),

@@ -1,6 +1,7 @@
 package ru.koda.gigachat.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,6 +39,7 @@ import javax.persistence.Transient;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(value = { "password" }, allowSetters = true)
 public class User extends AbstractEntity {
 
     @Column(name = "login", nullable = false)

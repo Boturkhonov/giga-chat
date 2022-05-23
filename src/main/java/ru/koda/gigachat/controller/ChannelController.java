@@ -16,6 +16,7 @@ import ru.koda.gigachat.repo.ChannelRepository;
 import ru.koda.gigachat.repo.ChannelUserRepository;
 import ru.koda.gigachat.service.ChannelService;
 import ru.koda.gigachat.service.UserService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 import java.util.Set;
@@ -24,12 +25,24 @@ import java.util.Set;
 @RequestMapping("api/channels")
 public class ChannelController {
 
+    /**
+     * Сервис для работы с Пользователями.
+     */
     private final UserService userService;
 
+    /**
+     * Сервис для работы с Каналами.
+     */
     private final ChannelService channelService;
 
+    /**
+     * Репозиторий для работы с Пользователями с Канала.
+     */
     private final ChannelUserRepository channelUserRepository;
 
+    /**
+     * Репозиторий для работы с Каналами.
+     */
     private final ChannelRepository channelRepository;
 
     public ChannelController(final UserService userService,
@@ -43,12 +56,12 @@ public class ChannelController {
     }
 
     @GetMapping
-    public Set<Channel> getUserChannels(final Principal principal) {
+    public Set<Channel> getUserChannels(@ApiIgnore final Principal principal) {
         return userService.getChannels(userService.getByLogin(principal.getName()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Channel> getChannel(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<Channel> getChannel(@PathVariable final String id, @ApiIgnore final Principal principal) {
         final Channel channel = channelService.getById(id);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(channel)
@@ -56,7 +69,8 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/users")
-    public ResponseEntity<Set<User>> getChannelUsers(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<Set<User>> getChannelUsers(@PathVariable final String id,
+            @ApiIgnore final Principal principal) {
         final Channel channel = channelService.getById(id);
         final Set<User> subscribers = channelService.getSubscribers(channel);
         return channelService.isAccessibleByUser(channel, principal.getName())
@@ -65,7 +79,8 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/chats")
-    public ResponseEntity<Set<Chat>> getChannelChats(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<Set<Chat>> getChannelChats(@PathVariable final String id,
+            @ApiIgnore final Principal principal) {
         final Channel channel = channelService.getById(id);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(channel.getChats())
@@ -73,12 +88,12 @@ public class ChannelController {
     }
 
     @PostMapping
-    public Channel createChannel(final Principal principal, @RequestBody final Channel channel) {
+    public Channel createChannel(@RequestBody final Channel channel, @ApiIgnore final Principal principal) {
         return channelService.saveChannel(channel, principal.getName());
     }
 
     @GetMapping("{id}/leave")
-    public void leaveChannel(final Principal principal, @PathVariable final String id) {
+    public void leaveChannel(@PathVariable final String id, @ApiIgnore final Principal principal) {
         final Channel channel = channelService.getById(id);
         final User user = userService.getByLogin(principal.getName());
 
@@ -86,7 +101,8 @@ public class ChannelController {
     }
 
     @PatchMapping
-    public ResponseEntity<Channel> updateChannel(@RequestBody final Channel channel, final Principal principal) {
+    public ResponseEntity<Channel> updateChannel(@RequestBody final Channel channel,
+            @ApiIgnore final Principal principal) {
         final User user = userService.getByLogin(principal.getName());
         final Channel old = channelService.getById(channel.getId());
         if (old.getOwner().equals(user)) {
@@ -97,7 +113,7 @@ public class ChannelController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteChannel(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<String> deleteChannel(@PathVariable final String id, @ApiIgnore final Principal principal) {
         final User user = userService.getByLogin(principal.getName());
         final Channel channel = channelService.getById(id);
 

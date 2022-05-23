@@ -9,7 +9,7 @@ create table app_user
     password      varchar(255) not null,
     name          varchar(255) not null,
     avatar_id     varchar(255),
-    about         varchar(255) not null,
+    about         varchar(255),
     is_public     boolean      not null default true
 );
 

@@ -10,6 +10,7 @@ import ru.koda.gigachat.entity.Chat;
 import ru.koda.gigachat.entity.ChatUser;
 import ru.koda.gigachat.entity.User;
 import ru.koda.gigachat.repo.UserRepository;
+import ru.koda.gigachat.service.AvatarService;
 import ru.koda.gigachat.service.UserService;
 
 import java.util.Set;
@@ -19,13 +20,16 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Value("${ru.koda.giga-chat.default-avatar-id}")
-    private String defaultAvatarId;
+    @Value("${ru.koda.giga-chat.default-user-avatar-id}")
+    private String defaultUserAvatarId;
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    private final AvatarService avatarService;
+
+    public UserServiceImpl(final UserRepository userRepository, final AvatarService avatarService) {
         this.userRepository = userRepository;
+        this.avatarService = avatarService;
     }
 
     @Override
@@ -43,6 +47,7 @@ public class UserServiceImpl implements UserService {
         user.setId(UUID.randomUUID().toString());
         user.setLogin(user.getLogin().toLowerCase());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAvatar(avatarService.getById(defaultUserAvatarId));
 
         return userRepository.save(user);
     }

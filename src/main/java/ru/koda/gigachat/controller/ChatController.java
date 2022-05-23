@@ -15,6 +15,7 @@ import ru.koda.gigachat.entity.Message;
 import ru.koda.gigachat.entity.User;
 import ru.koda.gigachat.service.ChatService;
 import ru.koda.gigachat.service.UserService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 import java.util.Comparator;
@@ -35,17 +36,17 @@ public class ChatController {
     }
 
     @GetMapping
-    public Set<Chat> getUserChats(final Principal principal) {
+    public Set<Chat> getUserChats(@ApiIgnore final Principal principal) {
         return userService.getChats(userService.getByLogin(principal.getName()));
     }
 
     @GetMapping("/private")
-    public Set<Chat> getUserPrivateChats(final Principal principal) {
+    public Set<Chat> getUserPrivateChats(@ApiIgnore final Principal principal) {
         return chatService.getPrivateChats(userService.getByLogin(principal.getName()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Chat> getChat(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<Chat> getChat(@PathVariable final String id, @ApiIgnore final Principal principal) {
         final Chat chat = chatService.getById(id);
         return chatService.isAccessibleByUser(chat, principal.getName())
                 ? ResponseEntity.ok(chat)
@@ -53,7 +54,8 @@ public class ChatController {
     }
 
     @GetMapping("{id}/messages")
-    public ResponseEntity<List<Message>> getChatMessages(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<List<Message>> getChatMessages(@PathVariable final String id,
+            @ApiIgnore final Principal principal) {
         final Chat chat = chatService.getById(id);
         if (chatService.isAccessibleByUser(chat, principal.getName())) {
             chat.getMessages().sort(Comparator.comparing(AbstractEntity::getCreationTime));
@@ -63,7 +65,7 @@ public class ChatController {
     }
 
     @GetMapping("{id}/users")
-    public ResponseEntity<Set<User>> getChatUsers(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<Set<User>> getChatUsers(@PathVariable final String id, @ApiIgnore final Principal principal) {
         final Chat chat = chatService.getById(id);
         return chatService.isAccessibleByUser(chat, principal.getName())
                 ? ResponseEntity.ok(chatService.getUsers(chat))
@@ -71,12 +73,12 @@ public class ChatController {
     }
 
     @PostMapping
-    public Chat createChat(final Principal principal, @RequestBody final Chat chat) {
+    public Chat createChat(@RequestBody final Chat chat, @ApiIgnore final Principal principal) {
         return chatService.saveChat(chat, principal.getName());
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<?> updateChat(final Principal principal, @PathVariable final String id) {
+    public ResponseEntity<Chat> updateChat(@PathVariable final String id, @ApiIgnore final Principal principal) {
         final User user = userService.getByLogin(principal.getName());
         final Chat chat = chatService.getById(id);
         final Boolean updated = chatService.updateChat(chat, user);
@@ -84,7 +86,7 @@ public class ChatController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteChat(final Principal principal, @PathVariable String id) {
+    public ResponseEntity<Chat> deleteChat(@PathVariable String id, @ApiIgnore final Principal principal) {
         final User user = userService.getByLogin(principal.getName());
         final Chat chat = chatService.getById(id);
         final Boolean deleted = chatService.deleteChat(chat, user);
