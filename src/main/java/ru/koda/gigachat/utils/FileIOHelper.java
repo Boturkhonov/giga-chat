@@ -25,13 +25,15 @@ public class FileIOHelper {
             }
             final String fileName = UUID.randomUUID() + fileExtension;
             final Path path = Paths.get(uploadFolder, fileName);
-            Files.write(path, bytes, StandardOpenOption.CREATE);
+            if (Files.notExists(path)) {
+                Files.write(path, bytes, StandardOpenOption.CREATE);
+            }
             return fileName;
         }
         return null;
     }
 
-    public static void deleteFile(String fileName, String folder) throws IOException {
+    public static void deleteFile(final String fileName, final String folder) throws IOException {
         final Path path = Paths.get(folder, fileName);
         Files.delete(path);
     }

@@ -1,6 +1,10 @@
 package ru.koda.gigachat.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import ru.koda.gigachat.entity.Avatar;
+import ru.koda.gigachat.entity.User;
+
+import java.io.IOException;
 
 /**
  * Сервис для работы с Аватарами.
@@ -12,6 +16,6 @@ public interface AvatarService {
 
     Avatar getById(final String id);
 
-    Avatar saveAvatar(final Avatar avatar);
+    Avatar saveUserAvatar(final User user, final MultipartFile image) throws IOException;
 
 }

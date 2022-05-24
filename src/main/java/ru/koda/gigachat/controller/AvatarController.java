@@ -1,18 +1,20 @@
 package ru.koda.gigachat.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import ru.koda.gigachat.entity.Avatar;
 import ru.koda.gigachat.entity.User;
-import ru.koda.gigachat.repo.UserRepository;
 import ru.koda.gigachat.service.AvatarService;
 import ru.koda.gigachat.service.UserService;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RestController
@@ -23,14 +25,9 @@ public class AvatarController {
 
     private final UserService userService;
 
-    private final UserRepository userRepository;
-
-    public AvatarController(final AvatarService avatarService,
-            final UserService userService,
-            final UserRepository userRepository) {
+    public AvatarController(final AvatarService avatarService, final UserService userService) {
         this.avatarService = avatarService;
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping("{id}")
@@ -38,13 +35,11 @@ public class AvatarController {
         return avatarService.getById(id);
     }
 
-    @PostMapping("/user")
-    public Avatar updateUserAvatar(@RequestBody final Avatar avatar, @ApiIgnore final Principal principal) {
+    @PostMapping(value = "/user", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public Avatar updateUserAvatar(@RequestPart("image") final MultipartFile image,
+            @ApiIgnore final Principal principal) throws IOException {
         final User user = userService.getByLogin(principal.getName());
-        final Avatar savedAvatar = avatarService.saveAvatar(avatar);
-        user.setAvatar(savedAvatar);
-        userRepository.save(user);
-        return savedAvatar;
+        return avatarService.saveUserAvatar(user, image);
     }
 
 }
