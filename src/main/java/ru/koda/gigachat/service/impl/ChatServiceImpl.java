@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.koda.gigachat.entity.Channel;
 import ru.koda.gigachat.entity.Chat;
 import ru.koda.gigachat.entity.ChatType;
-import ru.koda.gigachat.entity.ChatUser;
 import ru.koda.gigachat.entity.User;
 import ru.koda.gigachat.repo.ChatRepository;
 import ru.koda.gigachat.service.ChannelService;
@@ -13,6 +12,7 @@ import ru.koda.gigachat.service.ChatService;
 import ru.koda.gigachat.service.ChatUserService;
 import ru.koda.gigachat.service.UserService;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -65,6 +65,14 @@ public class ChatServiceImpl implements ChatService {
                 final Channel channel = channelService.getById(chat.getChannel().getId());
                 users.addAll(channelService.getSubscribers(channel));
                 break;
+            case PRIVATE:
+                final User friend = users.stream()
+                        .filter(u -> !u.getId().equals(user.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Friend not found"));
+                if (hasCommonPrivateChat(user, friend)) {
+                    throw new IllegalArgumentException("Private chat already exists");
+                }
         }
         users.add(user);
         chat.setId(UUID.randomUUID().toString());
@@ -117,7 +125,10 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Set<User> getUsers(final Chat chat) {
-        return chat.getChatUsers().stream().map(ChatUser::getUser).collect(Collectors.toSet());
+        return chat.getChatUsers()
+                .stream()
+                .map(chatUser -> userService.getById(chatUser.getUser().getId()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -136,6 +147,15 @@ public class ChatServiceImpl implements ChatService {
             }
         });
         return chats;
+    }
+
+    private boolean hasCommonPrivateChat(final User user, final User friend) {
+
+        final Set<Chat> privateChats = getPrivateChats(user);
+        final Set<User> users = new HashSet<>();
+        privateChats.forEach(chat -> users.addAll(getUsers(chat)));
+
+        return users.contains(friend);
     }
 
 }

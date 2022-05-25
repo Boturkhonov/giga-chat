@@ -21,7 +21,7 @@ import java.util.Collections;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String[] ALLOWED_GUEST_GET = new String[] { "/api/login", "/api/register", "/chat" };
+    private final String[] ALLOWED_GUEST_POST = new String[] { "/api/login", "/api/register", "/chat" };
 
     private final UserDetailsService userDetailsService;
 
@@ -46,9 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, ALLOWED_GUEST_GET)
+                .antMatchers(HttpMethod.GET, ALLOWED_GUEST_POST)
                 .permitAll()
-                .antMatchers(HttpMethod.POST, ALLOWED_GUEST_GET)
+                .antMatchers(HttpMethod.POST, ALLOWED_GUEST_POST)
                 .permitAll()
                 .anyRequest()
                 .permitAll()

@@ -1,5 +1,6 @@
 package ru.koda.gigachat.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,11 +94,15 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/leave")
-    public void leaveChannel(@PathVariable final String id, @ApiIgnore final Principal principal) {
+    public ResponseEntity<HttpStatus> leaveChannel(@PathVariable final String id,
+            @ApiIgnore final Principal principal) {
         final Channel channel = channelService.getById(id);
         final User user = userService.getByLogin(principal.getName());
-
-        channelUserRepository.deleteByChannelAndUser(channel, user);
+        if (!channel.getOwner().getId().equals(user.getId())) {
+            channelUserRepository.deleteByChannelAndUser(channel, user);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @PatchMapping
