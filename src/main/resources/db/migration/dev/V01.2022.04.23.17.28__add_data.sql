@@ -33,9 +33,9 @@ values ('ed3aef74-a0eb-45db-9f38-0527af577e76', 'id_Test_Private_Chat1',
         'id_Test_User3', null, '2022-04-23 00:00:00'),
 
        ('b3b85695-82fd-4a98-8d35-9fafaa4d8dd4', 'id_Test_Private_Chat3',
-        'id_Test_User', null, '2022-04-23 00:00:00'),
-       ('4064458e-1b16-4a13-b44c-adfd6b188fe8', 'id_Test_Private_Chat3',
-        'id_Test_User3', null, '2022-04-23 00:00:00');
+        'id_Test_User', null, '2022-04-23 00:00:00');
+--        ('4064458e-1b16-4a13-b44c-adfd6b188fe8', 'id_Test_Private_Chat3',
+--         'id_Test_User3', null, '2022-04-23 00:00:00');
 
 
 insert into channel(id, creation_time, name, avatar_id, owner_id, about, link)

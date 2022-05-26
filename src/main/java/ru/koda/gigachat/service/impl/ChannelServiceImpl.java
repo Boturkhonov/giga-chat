@@ -52,8 +52,9 @@ public class ChannelServiceImpl implements ChannelService {
         channel.setId(UUID.randomUUID().toString());
         channel.setOwner(user);
         channel.setLink(getHash(channel.getId()));
-        channelUserService.createChannelUser(channel, user);
-        return channelRepository.save(channel);
+        final Channel save = channelRepository.save(channel);
+        channelUserService.createChannelUser(save, user);
+        return save;
     }
 
     @Override

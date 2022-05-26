@@ -77,7 +77,7 @@ public class ChatServiceImpl implements ChatService {
         users.add(user);
         chat.setId(UUID.randomUUID().toString());
         final Chat save = chatRepository.save(chat);
-        users.forEach(u -> chatUserService.createChatUser(chat, u));
+        users.forEach(u -> chatUserService.createChatUser(save, u));
         return save;
     }
 
@@ -100,7 +100,7 @@ public class ChatServiceImpl implements ChatService {
                 return isAccessibleByUser(chat, user);
             case PUBLIC:
             case CHANNEL:
-                return chat.getChannel().getOwner().equals(user);
+                return chat.getChannel().getOwner().getId().equals(user.getId());
         }
         return false;
     }

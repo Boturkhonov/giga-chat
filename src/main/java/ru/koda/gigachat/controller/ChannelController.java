@@ -16,11 +16,15 @@ import ru.koda.gigachat.entity.User;
 import ru.koda.gigachat.repo.ChannelRepository;
 import ru.koda.gigachat.repo.ChannelUserRepository;
 import ru.koda.gigachat.service.ChannelService;
+import ru.koda.gigachat.service.ChannelUserService;
 import ru.koda.gigachat.service.UserService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.Set;
+
+import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("api/channels")
@@ -41,6 +45,8 @@ public class ChannelController {
      */
     private final ChannelUserRepository channelUserRepository;
 
+    private final ChannelUserService channelUserService;
+
     /**
      * Репозиторий для работы с Каналами.
      */
@@ -49,10 +55,12 @@ public class ChannelController {
     public ChannelController(final UserService userService,
             final ChannelService channelService,
             final ChannelUserRepository channelUserRepository,
+            final ChannelUserService channelUserService,
             final ChannelRepository channelRepository) {
         this.userService = userService;
         this.channelService = channelService;
         this.channelUserRepository = channelUserRepository;
+        this.channelUserService = channelUserService;
         this.channelRepository = channelRepository;
     }
 
@@ -66,7 +74,7 @@ public class ChannelController {
         final Channel channel = channelService.getById(id);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(channel)
-                : ResponseEntity.badRequest().build();
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("{id}/users")
@@ -76,7 +84,7 @@ public class ChannelController {
         final Set<User> subscribers = channelService.getSubscribers(channel);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(subscribers)
-                : ResponseEntity.badRequest().build();
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("{id}/chats")
@@ -85,7 +93,7 @@ public class ChannelController {
         final Channel channel = channelService.getById(id);
         return channelService.isAccessibleByUser(channel, principal.getName())
                 ? ResponseEntity.ok(channel.getChats())
-                : ResponseEntity.badRequest().build();
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PostMapping
@@ -94,6 +102,7 @@ public class ChannelController {
     }
 
     @GetMapping("{id}/leave")
+    @Transactional
     public ResponseEntity<HttpStatus> leaveChannel(@PathVariable final String id,
             @ApiIgnore final Principal principal) {
         final Channel channel = channelService.getById(id);
@@ -102,7 +111,7 @@ public class ChannelController {
             channelUserRepository.deleteByChannelAndUser(channel, user);
             return ResponseEntity.status(HttpStatus.OK).build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PatchMapping
@@ -114,7 +123,7 @@ public class ChannelController {
             channelRepository.save(channel);
             return ResponseEntity.ok(channel);
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @DeleteMapping("{id}")
@@ -125,6 +134,20 @@ public class ChannelController {
         if (channel.getOwner().equals(user)) {
             channelRepository.delete(channel);
             return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @GetMapping("join/{link}")
+    public ResponseEntity<Channel> joinChannel(@PathVariable final String link, @ApiIgnore final Principal principal) {
+        final Optional<Channel> optionalChannel = channelRepository.findByLink(link);
+        final User user = userService.getByLogin(principal.getName());
+        if (optionalChannel.isPresent()) {
+            final Channel channel = optionalChannel.get();
+            if (!channelService.isAccessibleByUser(channel, principal.getName())) {
+                channelUserService.createChannelUser(channel, user);
+            }
+            return ResponseEntity.ok(channel);
         }
         return ResponseEntity.badRequest().build();
     }

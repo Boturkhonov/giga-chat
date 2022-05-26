@@ -1,13 +1,13 @@
 package ru.koda.gigachat.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -56,10 +56,11 @@ public class Chat extends AbstractEntity {
     @JoinColumn(name = "channel_id")
     private Channel channel;
 
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
-    private Set<ChatUser> chatUsers = new HashSet<>();
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ChatUser> chatUsers;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
