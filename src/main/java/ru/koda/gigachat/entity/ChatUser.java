@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,7 +37,7 @@ public class ChatUser extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "last_read_message_id")
     private Message lastReadMessage;
 

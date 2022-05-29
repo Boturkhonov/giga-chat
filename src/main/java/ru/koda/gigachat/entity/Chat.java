@@ -64,6 +64,7 @@ public class Chat extends AbstractEntity {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
 }
