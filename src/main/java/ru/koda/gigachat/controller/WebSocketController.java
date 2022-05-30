@@ -12,6 +12,8 @@ import ru.koda.gigachat.service.MessageService;
 import ru.koda.gigachat.service.UserService;
 import ru.koda.gigachat.utils.JwtUtil;
 
+import javax.transaction.Transactional;
+
 @RestController
 public class WebSocketController {
 
@@ -34,6 +36,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/chat/{id}")
+    @Transactional
     public void messageHandler(final Message message, @DestinationVariable final String id) {
         final Chat chat = chatService.getById(id);
         final User user = userService.getByLogin(JwtUtil.extractUsername(message.getSender().getToken()));
