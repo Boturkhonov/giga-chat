@@ -2,7 +2,6 @@ package ru.koda.gigachat.service.impl;
 
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.koda.gigachat.entity.Channel;
 import ru.koda.gigachat.entity.Chat;
 import ru.koda.gigachat.entity.ChatType;
 import ru.koda.gigachat.entity.User;
@@ -59,22 +58,21 @@ public class ChatServiceImpl implements ChatService {
     public Chat saveChat(final Chat chat, final String creatorLogin) {
         final User user = userService.getByLogin(creatorLogin);
         final Set<User> users = getUsers(chat);
-        switch (chat.getChatType()) {
-            case PUBLIC:
-            case CHANNEL:
-                final Channel channel = channelService.getById(chat.getChannel().getId());
-                users.addAll(channelService.getSubscribers(channel));
-                break;
-            case PRIVATE:
-                final User friend = users.stream()
-                        .filter(u -> !u.getId().equals(user.getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Friend not found"));
-                if (hasCommonPrivateChat(user, friend)) {
-                    throw new IllegalArgumentException("Private chat already exists");
-                }
+        // case PUBLIC:
+        // case CHANNEL:
+        // final Channel channel = channelService.getById(chat.getChannel().getId());
+        // users.addAll(channelService.getSubscribers(channel));
+        // break;
+        if (chat.getChatType() == ChatType.PRIVATE) {
+            final User friend = users.stream()
+                    .filter(u -> !u.getId().equals(user.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Friend not found"));
+            if (hasCommonPrivateChat(user, friend)) {
+                throw new IllegalArgumentException("Private chat already exists");
+            }
+            users.add(user);
         }
-        users.add(user);
         chat.setId(UUID.randomUUID().toString());
         final Chat save = chatRepository.save(chat);
         users.forEach(u -> chatUserService.createChatUser(save, u));
@@ -125,10 +123,16 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Set<User> getUsers(final Chat chat) {
-        return chat.getChatUsers()
-                .stream()
-                .map(chatUser -> userService.getById(chatUser.getUser().getId()))
-                .collect(Collectors.toSet());
+        switch (chat.getChatType()) {
+            case CHANNEL:
+            case PUBLIC:
+                return channelService.getSubscribers(chat.getChannel());
+            default:
+                return chat.getChatUsers()
+                        .stream()
+                        .map(chatUser -> userService.getById(chatUser.getUser().getId()))
+                        .collect(Collectors.toSet());
+        }
     }
 
     @Override

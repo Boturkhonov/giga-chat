@@ -13,6 +13,7 @@ import ru.koda.gigachat.repo.UserRepository;
 import ru.koda.gigachat.service.AvatarService;
 import ru.koda.gigachat.service.UserService;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -59,7 +60,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<Chat> getChats(final User user) {
-        return user.getChatUsers().stream().map(ChatUser::getChat).collect(Collectors.toSet());
+        final Set<ChatUser> chatUsers = user.getChatUsers();
+        final Set<Chat> chats = new HashSet<>();
+        getChannels(user).forEach(channel -> chats.addAll(channel.getChats()));
+        chats.addAll(chatUsers.stream().map(ChatUser::getChat).collect(Collectors.toSet()));
+        return chats;
     }
 
 }

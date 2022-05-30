@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -64,12 +65,12 @@ public class Channel extends AbstractEntity {
     @EqualsAndHashCode.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<ChannelUser> channelUsers;
+    private Set<ChannelUser> channelUsers = new HashSet<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "channel", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Chat> chats;
+    private Set<Chat> chats = new HashSet<>();
 
 }

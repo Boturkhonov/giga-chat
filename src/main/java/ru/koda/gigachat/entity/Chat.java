@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ public class Chat extends AbstractEntity {
     @EqualsAndHashCode.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<ChatUser> chatUsers;
+    private Set<ChatUser> chatUsers = new HashSet<>();
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
