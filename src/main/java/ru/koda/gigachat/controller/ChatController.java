@@ -1,5 +1,6 @@
 package ru.koda.gigachat.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,12 +78,11 @@ public class ChatController {
         return chatService.saveChat(chat, principal.getName());
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<Chat> updateChat(@PathVariable final String id, @ApiIgnore final Principal principal) {
+    @PatchMapping
+    public ResponseEntity<Chat> updateChat(@RequestBody final Chat chat, @ApiIgnore final Principal principal) {
         final User user = userService.getByLogin(principal.getName());
-        final Chat chat = chatService.getById(id);
         final Boolean updated = chatService.updateChat(chat, user);
-        return updated ? ResponseEntity.ok(chat) : ResponseEntity.badRequest().build();
+        return updated ? ResponseEntity.ok(chat) : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @DeleteMapping("{id}")
