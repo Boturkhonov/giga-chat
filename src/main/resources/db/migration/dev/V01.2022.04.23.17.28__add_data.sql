@@ -28,11 +28,11 @@ insert into chat (id, creation_time, name, chat_type, avatar_id, channel_id)
 values ('id_Test_Private_Chat1', '2022-04-23 00:00:00', null, 0, null, null),
        ('3a4fcd65-bad5-4151-be53-34eb5752ffbe', '2022-04-23 00:00:00', null, 0, null, null),
        ('id_Test_Private_Chat3', '2022-04-23 00:00:00', null, 0, null, null),
-       ('id_Test_Channel_Chat1', '2022-05-30 11:51:10.421000', 'quaerat voluptatibus quos', 2, null,
+       ('id_Test_Channel_Chat1', '2022-05-30 11:51:10.421000', 'Channel 1', 2, null,
         'id_Test_Channel_1'),
-       ('id_Test_Channel_Chat2', '2022-05-30 11:56:27.617000', 'rem ut necessitatibus', 2, null,
+       ('id_Test_Channel_Chat2', '2022-05-30 11:56:27.617000', 'Channel 2', 2, null,
         'id_Test_Channel_1'),
-       ('id_Test_Public_Chat1', '2022-05-30 12:00:57.814000', 'quam qui nesciunt', 1, null,
+       ('id_Test_Public_Chat1', '2022-05-30 12:00:57.814000', 'Public Chat', 1, null,
         'id_Test_Channel_1');
 
 
