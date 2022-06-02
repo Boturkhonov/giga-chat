@@ -14,6 +14,7 @@ import ru.koda.gigachat.service.AvatarService;
 import ru.koda.gigachat.service.UserService;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -65,6 +66,26 @@ public class UserServiceImpl implements UserService {
         getChannels(user).forEach(channel -> chats.addAll(channel.getChats()));
         chats.addAll(chatUsers.stream().map(ChatUser::getChat).collect(Collectors.toSet()));
         return chats;
+    }
+
+    @Override
+    public User updateUser(final User user, final User updater, final PasswordEncoder passwordEncoder) {
+
+        final Optional<User> optional = userRepository.findByLogin(user.getLogin().toLowerCase());
+        if (optional.isPresent() && !updater.getLogin().equals(user.getLogin().toLowerCase())) {
+            throw new IllegalArgumentException("User with username " + user.getLogin() + " already exist");
+        }
+
+        final User oldUser = getById(user.getId());
+        if (user.getPassword() != null) {
+            if (!user.getPassword().equals(oldUser.getPassword())) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        } else {
+            user.setPassword(oldUser.getPassword());
+        }
+
+        return userRepository.save(user);
     }
 
 }

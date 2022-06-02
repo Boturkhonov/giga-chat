@@ -25,4 +25,6 @@ public interface UserService {
 
     Set<Chat> getChats(final User user);
 
+    User updateUser(final User user, final User updater, final PasswordEncoder passwordEncoder);
+
 }

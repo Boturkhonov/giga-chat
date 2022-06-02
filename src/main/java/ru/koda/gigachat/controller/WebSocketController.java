@@ -40,6 +40,7 @@ public class WebSocketController {
     public void messageHandler(final Message message, @DestinationVariable final String id) {
         final Chat chat = chatService.getById(id);
         final User user = userService.getByLogin(JwtUtil.extractUsername(message.getSender().getToken()));
+
         message.setSender(user);
         message.setChat(chat);
         final Message saved = messageService.saveMessage(message);

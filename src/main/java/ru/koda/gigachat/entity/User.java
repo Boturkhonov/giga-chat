@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Сущность Пользователя.
@@ -42,12 +43,14 @@ import javax.persistence.Transient;
 @JsonIgnoreProperties(value = { "password" }, allowSetters = true)
 public class User extends AbstractEntity {
 
+    @NotBlank
     @Column(name = "login", nullable = false)
     private String login;
 
     @Column(name = "password", nullable = false)
     private String password;
 
+    @NotBlank
     @Column(name = "name", nullable = false)
     private String name;
 

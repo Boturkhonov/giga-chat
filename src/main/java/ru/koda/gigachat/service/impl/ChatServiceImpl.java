@@ -58,11 +58,6 @@ public class ChatServiceImpl implements ChatService {
     public Chat saveChat(final Chat chat, final String creatorLogin) {
         final User user = userService.getByLogin(creatorLogin);
         final Set<User> users = getUsers(chat);
-        // case PUBLIC:
-        // case CHANNEL:
-        // final Channel channel = channelService.getById(chat.getChannel().getId());
-        // users.addAll(channelService.getSubscribers(channel));
-        // break;
         if (chat.getChatType() == ChatType.PRIVATE) {
             final User friend = users.stream()
                     .filter(u -> !u.getId().equals(user.getId()))
@@ -76,6 +71,9 @@ public class ChatServiceImpl implements ChatService {
         chat.setId(UUID.randomUUID().toString());
         final Chat save = chatRepository.save(chat);
         users.forEach(u -> chatUserService.createChatUser(save, u));
+        if (chat.getChatType() == ChatType.PRIVATE) {
+            updatePrivateChat(chat, user);
+        }
         return save;
     }
 
@@ -142,13 +140,7 @@ public class ChatServiceImpl implements ChatService {
                 .filter(chat -> chat.getChatType() == ChatType.PRIVATE)
                 .collect(Collectors.toSet());
         chats.forEach(chat -> {
-            final Set<User> users = getUsers(chat);
-            final Optional<User> optional = users.stream().filter(u -> !u.equals(user)).findFirst();
-            if (optional.isPresent()) {
-                final User friend = optional.get();
-                chat.setName(friend.getName());
-                chat.setAvatar(friend.getAvatar());
-            }
+            updatePrivateChat(chat, user);
         });
         return chats;
     }
@@ -160,6 +152,15 @@ public class ChatServiceImpl implements ChatService {
         privateChats.forEach(chat -> users.addAll(getUsers(chat)));
 
         return users.contains(friend);
+    }
+
+    private void updatePrivateChat(final Chat chat, final User user) {
+        final Set<User> users = getUsers(chat);
+        final Optional<User> optional = users.stream().filter(u -> !u.equals(user)).findFirst();
+        if (optional.isPresent()) {
+            final User friend = optional.get();
+            chat.setFriend(friend);
+        }
     }
 
 }
